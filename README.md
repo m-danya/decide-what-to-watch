@@ -21,7 +21,7 @@ This script allows you to specify all your chill-content sources:
 {
   "alternatives": [
     {
-      "link": "...",
+      "link": "https://www.google.com",
       "weight": 50,
       "description": "Your favourite streaming service with films/series"
     },
@@ -60,6 +60,7 @@ is useless. Just watch.
 - Weight sum does not have to be 100 or something else. Use the values you 
   like: weights distribution `20`:`30`:`50` is equal to `4`:`6`:`10` or 
   `2`:`3`:`5`
+- All links must start with "`https://`"
 
 # Installation
 ## Prerequisites
