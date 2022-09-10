@@ -89,3 +89,7 @@ Run this command in your terminal:
 ```bash
 decide
 ```
+
+## More
+[Статья в блоге](https://m-danya.ru/decide-what-to-watch/)
+
