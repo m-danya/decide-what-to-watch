@@ -1,11 +1,12 @@
 import argparse
 import json
 import logging
+import os
 import random
 from pathlib import Path
 import webbrowser
 
-CONFIG_FILE_PATH = Path(__file__).parent / "config.json"
+CONFIG_FILE_PATH = Path.home() / '.config' / "decide.json"
 
 
 def main():
@@ -14,7 +15,11 @@ def main():
     if args.config:
         if not CONFIG_FILE_PATH.exists():
             CONFIG_FILE_PATH.touch()
-        webbrowser.open(str(CONFIG_FILE_PATH))
+        editor = os.getenv('EDITOR')
+        if editor:
+            os.system(editor + ' ' + str(CONFIG_FILE_PATH))
+        else:
+            webbrowser.open(str(CONFIG_FILE_PATH))
         return
     if args.show_config_path:
         print(CONFIG_FILE_PATH)
