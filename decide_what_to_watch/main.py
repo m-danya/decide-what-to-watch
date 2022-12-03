@@ -6,7 +6,7 @@ import random
 from pathlib import Path
 import webbrowser
 
-CONFIG_FILE_PATH = Path.home() / '.config' / "decide.json"
+CONFIG_FILE_PATH = Path.home() / ".config" / "decide.json"
 
 
 def main():
@@ -15,16 +15,15 @@ def main():
     if args.config:
         if not CONFIG_FILE_PATH.exists():
             CONFIG_FILE_PATH.touch()
-        editor = os.getenv('EDITOR')
+        editor = os.getenv("EDITOR")
         if editor:
-            os.system(editor + ' ' + str(CONFIG_FILE_PATH))
+            os.system(editor + " " + str(CONFIG_FILE_PATH))
         else:
             webbrowser.open(str(CONFIG_FILE_PATH))
         return
     if args.show_config_path:
         print(CONFIG_FILE_PATH)
         return
-    alternatives = []
     try:
         with open(CONFIG_FILE_PATH) as config_file:
             alternatives = json.load(config_file)["alternatives"]
@@ -37,14 +36,20 @@ def main():
 
     if len(alternatives) == 0:
         logger.error(
-            f"The config file {CONFIG_FILE_PATH} has no alternatives"
-            " to choose from!"
+            f"The config file {CONFIG_FILE_PATH} has no alternatives to choose from!"
         )
-
-    alternative = random.choices(
-        alternatives, weights=[a["weight"] for a in alternatives]
+    for a in alternatives:
+        if "class" not in a:
+            a["class"] = "__unclassified"
+        if "weight" not in a:
+            a["weight"] = 1
+    classes = set(a["class"] for a in alternatives)
+    selected_class = random.choice(tuple(classes))
+    selected_class_alternatives = [a for a in alternatives if a["class"] == selected_class]
+    a = random.choices(
+        selected_class_alternatives, weights=[a["weight"] for a in selected_class_alternatives]
     )[0]
-    webbrowser.open(alternative["link"])
+    webbrowser.open(a["link"])
 
 
 def parse_args():
