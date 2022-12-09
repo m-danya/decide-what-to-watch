@@ -7,11 +7,24 @@ from pathlib import Path
 import webbrowser
 
 CONFIG_FILE_PATH = Path.home() / ".config" / "decide.json"
+LOG_FILE_PATH = Path("/var/log/decide.log")
 
 
 def main():
     args = parse_args()
-    logger = logging.getLogger(__name__)
+    if LOG_FILE_PATH.exists():
+        # logging into this file is expected
+        logging.basicConfig(
+            filename=LOG_FILE_PATH,
+            encoding="utf-8",
+            level=logging.INFO,
+            format="%(asctime)s - %(funcName)s: %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
+        )
+    else:
+        # the default logging level is WARNING, so
+        # INFO messages just won't show up
+        pass
     if args.config:
         if not CONFIG_FILE_PATH.exists():
             CONFIG_FILE_PATH.touch()
@@ -28,14 +41,14 @@ def main():
         with open(CONFIG_FILE_PATH) as config_file:
             alternatives = json.load(config_file)["alternatives"]
     except FileNotFoundError:
-        logger.error(f"The config file '{CONFIG_FILE_PATH}' does not exist!")
+        logging.error(f"The config file '{CONFIG_FILE_PATH}' does not exist!")
         return
     except json.JSONDecodeError:
-        logger.error(f"Failed to parse {CONFIG_FILE_PATH}!", exc_info=True)
+        logging.error(f"Failed to parse {CONFIG_FILE_PATH}!", exc_info=True)
         return
 
     if len(alternatives) == 0:
-        logger.error(
+        logging.error(
             f"The config file {CONFIG_FILE_PATH} has no alternatives to choose from!"
         )
     for a in alternatives:
@@ -45,10 +58,14 @@ def main():
             a["weight"] = 1
     classes = set(a["class"] for a in alternatives)
     selected_class = random.choice(tuple(classes))
-    selected_class_alternatives = [a for a in alternatives if a["class"] == selected_class]
+    selected_class_alternatives = [
+        a for a in alternatives if a["class"] == selected_class
+    ]
     a = random.choices(
-        selected_class_alternatives, weights=[a["weight"] for a in selected_class_alternatives]
+        selected_class_alternatives,
+        weights=[a["weight"] for a in selected_class_alternatives],
     )[0]
+    logging.info(f"decided to watch {a['description']} --- {a['link']}")
     webbrowser.open(a["link"])
 
 

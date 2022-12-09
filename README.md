@@ -125,6 +125,21 @@ Run this command in your terminal:
 decide
 ```
 
+## How to enable logging
+
+If you want to store logs, just create the log file with appropriate permissions:
+
+```bash
+sudo touch /var/log/decide.log
+sudo chown $USER:$USER /var/log/decide.log
+sudo chmod 0666 /var/log/decide.log
+```
+
+The log messages will look like this:
+```
+2022-12-09 23:08:36 - main: decided to watch <DESCRIPTION> --- <LINK>
+```
+
 ## More
 [Статья в блоге](https://m-danya.ru/decide-what-to-watch/)
 
