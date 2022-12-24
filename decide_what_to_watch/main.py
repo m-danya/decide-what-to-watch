@@ -39,13 +39,20 @@ def main():
         return
     try:
         with open(CONFIG_FILE_PATH) as config_file:
-            alternatives = json.load(config_file)["alternatives"]
+            config = json.load(config_file)
+            alternatives = config["alternatives"]
     except FileNotFoundError:
         logging.error(f"The config file '{CONFIG_FILE_PATH}' does not exist!")
         return
     except json.JSONDecodeError:
         logging.error(f"Failed to parse {CONFIG_FILE_PATH}!", exc_info=True)
         return
+    if "suggest_reading_a_book_instead" in config:
+        print("Wouldn't you rather read a book? (press enter if you agree)")
+        if not input():
+            print('You made the right choice!')
+            logging.info(f"decided to read a book")
+            return
 
     if len(alternatives) == 0:
         logging.error(
